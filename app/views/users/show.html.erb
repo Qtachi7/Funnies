@@ -85,7 +85,7 @@
   <%# タブ %>
   <% tabs = [
     { id: "posts",     label: "投稿",        label_en: "Posts",      count: @user.posts.count },
-    { id: "reactions", label: "リアクション", label_en: "Reactions",   count: nil },
+    { id: "reactions", label: "リアクション", label_en: "Reactions",   count: @user.reactions.distinct.count(:post_id) },
     { id: "stats",     label: "統計",        label_en: "Statistics",  count: nil },
   ] %>
 
@@ -137,13 +137,25 @@
 
       <%# リアクションタブ %>
       <% elsif @tab == "reactions" %>
-        <div class="text-center py-16">
-          <div class="w-20 h-20 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-4xl">❤️</span>
+        <% if @reacted_posts.any? %>
+          <div class="space-y-6">
+            <% @reacted_posts.each do |post| %>
+              <%= render "posts/post_card", post: post,
+                  user_reacted_kinds: @user_reactions[post.id] || Set.new %>
+            <% end %>
           </div>
-          <h3 class="text-lg font-bold text-neutral-900 mb-2">リアクション済みの投稿</h3>
-          <p class="text-neutral-500 text-sm">リアクションした投稿がここに表示されます</p>
-        </div>
+        <% else %>
+          <div class="text-center py-16">
+            <div class="w-20 h-20 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-4xl">😄</span>
+            </div>
+            <h3 class="text-lg font-bold text-neutral-900 mb-2">まだリアクションしていません</h3>
+            <p class="text-neutral-500 text-sm">気に入った投稿にリアクションしてみましょう！</p>
+            <%= link_to root_path, class: "mt-4 inline-block px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full text-sm font-medium" do %>
+              タイムラインを見る
+            <% end %>
+          </div>
+        <% end %>
 
       <%# 統計タブ %>
       <% elsif @tab == "stats" %>

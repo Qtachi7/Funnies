@@ -1,5 +1,6 @@
 class Post < ApplicationRecord
   belongs_to :user, optional: true
+  has_many :reactions, dependent: :destroy
 
   REACTION_KINDS = %w[funny laugh cry wow cool cute surprised].freeze
 
@@ -53,11 +54,6 @@ class Post < ApplicationRecord
 
   def reaction_count(kind)
     send("#{kind}_count")
-  end
-
-  def increment_reaction!(kind)
-    return unless REACTION_KINDS.include?(kind.to_s)
-    increment!("#{kind}_count")
   end
 
   def author_name

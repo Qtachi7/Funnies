@@ -15,7 +15,8 @@
       <div class="space-y-6">
         <% if @posts.any? %>
           <% @posts.each do |post| %>
-            <%= render "posts/post_card", post: post %>
+            <%= render "posts/post_card", post: post,
+                user_reacted_kinds: @user_reacted_kinds[post.id] || Set.new %>
           <% end %>
         <% else %>
           <div class="bg-white rounded-2xl border border-neutral-200 p-12 text-center">

@@ -1,4 +1,4 @@
-<%# locals: (post:) %>
+<%# locals: (post:, user_reacted_kinds: Set.new) %>
 <article class="bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-all shadow-sm hover:shadow-md">
 
   <%# Header %>
@@ -28,7 +28,9 @@
   <%# メディア埋め込み（YouTube/Niconico は iframe、その他はリンクカード）%>
   <%= render "posts/embed", post: post, card: true %>
   <%# Reactions %>
-  <div class="px-6 pb-6" id="reactions-<%= post.id %>">
-    <%= render "posts/reactions", post: post %>
+  <div class="px-6 pb-6">
+    <div id="reactions-<%= post.id %>">
+      <%= render "posts/reactions", post: post, user_reacted_kinds: user_reacted_kinds %>
+    </div>
   </div>
 </article>

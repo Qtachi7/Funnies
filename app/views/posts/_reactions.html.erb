@@ -1,4 +1,4 @@
-<%# locals: (post:, size: :normal) %>
+<%# locals: (post:, size: :normal, user_reacted_kinds: Set.new) %>
 <% reactions = [
   { key: "funny",     label: "面白い",    icon: "😄" },
   { key: "laugh",     label: "笑える",    icon: "😂" },
@@ -9,12 +9,13 @@
   { key: "surprised", label: "びっくり",  icon: "😱" },
 ] %>
 
-<div class="flex flex-wrap gap-2">
+<div class="flex flex-wrap justify-end gap-2">
   <% reactions.each do |r| %>
+    <% active = user_reacted_kinds.include?(r[:key]) %>
     <%= button_to post_reactions_path(post, kind: r[:key]),
         method: :post,
         data: { turbo_stream: true },
-        class: "group flex items-center gap-2 px-3 py-1.5 rounded-full border border-neutral-200 hover:border-amber-300 hover:bg-amber-50 transition-all text-sm",
+        class: "group flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all text-sm #{active ? 'bg-amber-50 border-amber-400 text-amber-700' : 'border-neutral-200 hover:border-amber-300 hover:bg-amber-50'}",
         id: "reaction-btn-#{post.id}-#{r[:key]}" do %>
       <span class="text-base group-hover:scale-110 transition-transform"><%= r[:icon] %></span>
       <span class="font-medium" id="reaction-count-#{post.id}-#{r[:key]}">

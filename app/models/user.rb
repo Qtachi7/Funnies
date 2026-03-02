@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_one_attached :avatar
   has_one_attached :cover
   has_many :posts, dependent: :destroy
+  has_many :reactions, dependent: :destroy
+  has_many :reacted_posts, through: :reactions, source: :post
 
   validates :bio, length: { maximum: 160 }, allow_blank: true
 

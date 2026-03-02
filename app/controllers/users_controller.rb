@@ -7,6 +7,15 @@ class UsersController < ApplicationController
 
     @posts = @user.posts.order(created_at: :desc) if @tab == "posts"
 
+    if @tab == "reactions"
+      reacted_post_ids = @user.reactions.group(:post_id).order("MAX(reactions.created_at) DESC").pluck(:post_id)
+      @reacted_posts = Post.where(id: reacted_post_ids).includes(:user)
+                           .sort_by { |p| reacted_post_ids.index(p.id) }
+      @user_reactions = @user.reactions.where(post_id: reacted_post_ids)
+                             .group_by(&:post_id)
+                             .transform_values { |rs| rs.map(&:kind).to_set }
+    end
+
     if @tab == "stats"
       @reaction_totals = Post::REACTION_KINDS.map do |kind|
         { kind: kind, count: @user.posts.sum("#{kind}_count") }

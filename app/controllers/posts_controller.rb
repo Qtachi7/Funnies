@@ -4,6 +4,13 @@ class PostsController < ApplicationController
   def index
     @posts = Post.order(created_at: :desc)
     @post  = Post.new
+    @user_reacted_kinds = if current_user
+      current_user.reactions.where(post: @posts)
+        .group_by(&:post_id)
+        .transform_values { |rs| rs.map(&:kind).to_set }
+    else
+      {}
+    end
   end
 
   def show

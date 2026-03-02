@@ -1,6 +1,6 @@
 <%# リアクションエリア全体を置き換え %>
 <%= turbo_stream.replace "reactions-#{@post.id}" do %>
   <div id="reactions-<%= @post.id %>">
-    <%= render "posts/reactions", post: @post %>
+    <%= render "posts/reactions", post: @post, user_reacted_kinds: @user_reacted_kinds %>
   </div>
 <% end %>
