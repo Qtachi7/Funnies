@@ -43,6 +43,11 @@
             <% end %>
           </div>
 
+          <%# bio %>
+          <% if @user.bio.present? %>
+            <p class="text-neutral-700 leading-relaxed mb-4"><%= @user.bio %></p>
+          <% end %>
+
           <%# 参加日 %>
           <div class="flex items-center gap-2 text-sm text-neutral-600 mb-6">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

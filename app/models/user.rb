@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_one_attached :avatar
   has_many :posts, dependent: :destroy
 
+  validates :bio, length: { maximum: 160 }, allow_blank: true
+
   def display_name_or_email
     display_name.presence || email.split("@").first
   end
