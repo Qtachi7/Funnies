@@ -1,6 +1,18 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+  previewCover(event) {
+    const file = event.target.files[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const container = document.getElementById("cover-preview")
+      container.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`
+    }
+    reader.readAsDataURL(file)
+  }
+
   previewAvatar(event) {
     const file = event.target.files[0]
     if (!file) return

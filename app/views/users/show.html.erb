@@ -1,7 +1,13 @@
 <% content_for :title, "#{@user.display_name_or_email} – funny's" %>
 
 <%# カバー画像 %>
-<div class="h-48 md:h-64 bg-gradient-to-br from-amber-400 via-orange-400 to-orange-500"></div>
+<div class="h-48 md:h-64 overflow-hidden">
+  <% if @user.cover.attached? %>
+    <%= image_tag @user.cover.variant(resize_to_limit: [1440, 256]), class: "w-full h-full object-cover" %>
+  <% else %>
+    <div class="w-full h-full bg-gradient-to-br from-amber-400 via-orange-400 to-orange-500"></div>
+  <% end %>
+</div>
 
 <%# プロフィールコンテナ %>
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -24,6 +24,9 @@ class UsersController < ApplicationController
     if @user.update(user_params)
       redirect_to profile_path, notice: "プロフィールを更新しました"
     else
+      errors = @user.errors.map { |e| [ e.attribute, e.message ] }
+      @user = User.find(current_user.id)
+      errors.each { |attr, msg| @user.errors.add(attr, msg) }
       render :edit, status: :unprocessable_entity
     end
   end
@@ -31,6 +34,6 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:display_name, :username, :bio, :avatar)
+    params.require(:user).permit(:display_name, :username, :bio, :avatar, :cover)
   end
 end

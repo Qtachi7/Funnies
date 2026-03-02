@@ -8,6 +8,11 @@ ja:
         email: メールアドレス
         password: パスワード
         password_confirmation: パスワード（確認）
+        display_name: 表示名
+        username: ユーザーネーム
+        bio: 自己紹介
+        avatar: アイコン画像
+        cover: カバー画像
       post:
         url: URL
         title: タイトル
