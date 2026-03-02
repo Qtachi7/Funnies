@@ -12,7 +12,9 @@ Rails.application.routes.draw do
 
   resources :rankings, only: [:index]
 
-  get "profile", to: "users#show", as: :profile
+  get    "profile",      to: "users#show",   as: :profile
+  get    "profile/edit", to: "users#edit",   as: :edit_profile
+  patch  "profile",      to: "users#update"
 
   get "up" => "rails/health#show", as: :rails_health_check
 end

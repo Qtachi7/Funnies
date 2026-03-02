@@ -21,6 +21,8 @@ module App
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
+    config.active_storage.variant_processor = :mini_magick
+
     config.i18n.default_locale = :ja
     config.i18n.available_locales = [:ja, :en]
     config.time_zone = "Tokyo"

@@ -1,0 +1,102 @@
+<% content_for :title, "プロフィール編集 – funny's" %>
+
+<div class="max-w-2xl mx-auto px-4 sm:px-6 py-8" data-controller="profile-edit">
+
+  <%# 戻るボタン %>
+  <%= link_to profile_path, class: "inline-flex items-center gap-2 text-sm text-neutral-600 hover:text-neutral-900 mb-6" do %>
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+    </svg>
+    プロフィールに戻る
+  <% end %>
+
+  <h1 class="text-2xl font-bold mb-6">プロフィールを編集</h1>
+
+  <%= form_with model: @user, url: profile_path, method: :patch, multipart: true, class: "space-y-6" do |f| %>
+
+    <%# バリデーションエラー %>
+    <% if @user.errors.any? %>
+      <div class="bg-red-50 border border-red-200 rounded-2xl p-4">
+        <ul class="text-sm text-red-600 space-y-1">
+          <% @user.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%# アバター %>
+    <div class="bg-white rounded-2xl border border-neutral-200 p-6">
+      <h2 class="font-bold mb-4">アイコン画像</h2>
+      <div class="flex items-center gap-6">
+        <div id="avatar-preview" class="flex-shrink-0">
+          <% if @user.avatar.attached? %>
+            <%= image_tag @user.avatar.variant(resize_to_fill: [80, 80]),
+                class: "w-20 h-20 rounded-full object-cover border-2 border-neutral-200",
+                id: "avatar-preview-img" %>
+          <% else %>
+            <div class="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center border-2 border-neutral-200"
+                 id="avatar-preview-placeholder">
+              <span class="text-2xl font-bold text-amber-600">
+                <%= @user.display_name_or_email.first.upcase %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+        <div class="flex-1">
+          <%= f.label :avatar, "画像を選択", class: "block text-sm font-medium text-neutral-700 mb-2" %>
+          <%= f.file_field :avatar,
+              accept: "image/*",
+              class: "block w-full text-sm text-neutral-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 cursor-pointer",
+              data: { action: "change->profile-edit#previewAvatar" } %>
+          <p class="mt-1.5 text-xs text-neutral-500">JPG・PNG・GIF・WEBP（推奨：1MB以内）</p>
+        </div>
+      </div>
+    </div>
+
+    <%# 基本情報 %>
+    <div class="bg-white rounded-2xl border border-neutral-200 p-6 space-y-5">
+      <h2 class="font-bold">基本情報</h2>
+
+      <div>
+        <%= f.label :display_name, "表示名", class: "block text-sm font-medium text-neutral-700 mb-1.5" %>
+        <%= f.text_field :display_name,
+            placeholder: "例: やまだたろう",
+            class: "w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent text-sm" %>
+      </div>
+
+      <div>
+        <%= f.label :username, "ユーザーネーム", class: "block text-sm font-medium text-neutral-700 mb-1.5" %>
+        <div class="relative">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-sm">@</span>
+          <%= f.text_field :username,
+              placeholder: "例: yamada_taro",
+              class: "w-full pl-7 pr-4 py-2.5 rounded-xl border border-neutral-200 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent text-sm" %>
+        </div>
+        <p class="mt-1.5 text-xs text-neutral-500">半角英数字・アンダースコアのみ</p>
+      </div>
+
+      <div>
+        <%= f.label :bio, "自己紹介", class: "block text-sm font-medium text-neutral-700 mb-1.5" %>
+        <%= f.text_area :bio,
+            rows: 3,
+            maxlength: 160,
+            placeholder: "面白いコンテンツを集めています！",
+            class: "w-full px-4 py-2.5 rounded-xl border border-neutral-200 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent text-sm resize-none",
+            data: { action: "input->profile-edit#countBio" } %>
+        <p class="mt-1 text-xs text-neutral-500 text-right">
+          <span id="bio-count"><%= @user.bio.to_s.length %></span> / 160
+        </p>
+      </div>
+    </div>
+
+    <%# 保存ボタン %>
+    <div class="flex gap-3 justify-end">
+      <%= link_to "キャンセル", profile_path,
+          class: "px-6 py-2.5 rounded-full border border-neutral-200 text-sm font-medium hover:bg-neutral-50 transition-colors" %>
+      <%= f.submit "保存する",
+          class: "px-6 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-sm font-medium shadow-sm hover:shadow-md transition-all cursor-pointer" %>
+    </div>
+
+  <% end %>
+</div>
