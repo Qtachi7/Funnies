@@ -1,0 +1,60 @@
+<aside class="hidden xl:block w-80 sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto">
+  <div class="flex flex-col gap-6 py-4">
+
+    <%# 今日のランキング %>
+    <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+      <div class="px-6 py-4 border-b border-neutral-200">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+          </svg>
+          <h2 class="font-bold">今日のランキング</h2>
+          <span class="text-xs text-neutral-400 ml-auto">Today</span>
+        </div>
+      </div>
+
+      <div class="divide-y divide-neutral-100">
+        <% top_posts = Post.today.order(funny_count: :desc).limit(5) %>
+        <% if top_posts.any? %>
+          <% top_posts.each_with_index do |post, i| %>
+            <% rank = i + 1 %>
+            <%= link_to post_path(post), class: "block px-6 py-4 hover:bg-neutral-50 transition-colors" do %>
+              <div class="flex items-start gap-3">
+                <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm
+                  <%= rank == 1 ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-white' :
+                      rank == 2 ? 'bg-neutral-200 text-neutral-700' :
+                      rank == 3 ? 'bg-amber-100 text-amber-700' :
+                                  'bg-neutral-100 text-neutral-600' %>">
+                  <%= rank %>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium line-clamp-2"><%= post.title.presence || post.url.truncate(40) %></div>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-xs text-amber-600 font-bold">😄 <%= number_with_delimiter(post.funny_count) %></span>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        <% else %>
+          <div class="px-6 py-8 text-center text-sm text-neutral-400">
+            まだ投稿がありません
+          </div>
+        <% end %>
+      </div>
+
+      <%= link_to rankings_path, class: "block px-6 py-3 text-center text-sm text-amber-600 hover:bg-amber-50 transition-colors" do %>
+        ランキングをもっと見る
+      <% end %>
+    </div>
+
+    <%# サービス概要 %>
+    <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-6">
+      <div class="text-2xl mb-2">😄</div>
+      <h3 class="font-bold text-sm mb-1">funny`s とは？</h3>
+      <p class="text-xs text-neutral-600 leading-relaxed">
+        X・Instagram・YouTube・TikTok・ニコニコなど、ネット上の面白いコンテンツだけを集めたポジティブSNSです。
+      </p>
+    </div>
+  </div>
+</aside>

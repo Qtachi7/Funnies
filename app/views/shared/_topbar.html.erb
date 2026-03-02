@@ -1,0 +1,95 @@
+<nav class="sticky top-0 z-50 bg-white border-b border-neutral-200" data-controller="topbar">
+  <div class="max-w-[1440px] mx-auto px-4 md:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <%# Logo %>
+      <%= link_to root_path, class: "flex items-center gap-2 flex-shrink-0" do %>
+        <span class="text-2xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
+          funny`s
+        </span>
+      <% end %>
+
+      <%# Desktop Search (中央) %>
+      <div class="hidden md:flex flex-1 max-w-xl mx-8">
+        <div class="relative w-full">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input type="text" placeholder="面白いコンテンツを検索..."
+            class="w-full pl-11 pr-4 py-2 bg-neutral-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:bg-white transition-all">
+        </div>
+      </div>
+
+      <%# Desktop Nav Right %>
+      <div class="hidden md:flex items-center gap-3">
+        <%= link_to rankings_path, class: "inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium hover:bg-neutral-100 transition-colors" do %>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+          </svg>
+          ランキング
+        <% end %>
+
+        <% if user_signed_in? %>
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-neutral-600"><%= current_user.display_name_or_email %></span>
+            <%= button_to destroy_user_session_path, method: :delete,
+                class: "px-4 py-2 rounded-full text-sm font-medium border border-neutral-200 hover:bg-neutral-100 transition-colors" do %>
+              ログアウト
+            <% end %>
+          </div>
+        <% else %>
+          <%= link_to new_user_session_path,
+              class: "px-5 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-full text-sm font-medium transition-all shadow-sm hover:shadow-md" do %>
+            ログイン
+          <% end %>
+        <% end %>
+      </div>
+
+      <%# Mobile hamburger %>
+      <button class="md:hidden p-2 hover:bg-neutral-100 rounded-lg" data-action="click->topbar#toggleMenu">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+
+    <%# Mobile Search %>
+    <div class="md:hidden pb-3">
+      <div class="relative w-full">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input type="text" placeholder="検索..."
+          class="w-full pl-11 pr-4 py-2 bg-neutral-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:bg-white transition-all">
+      </div>
+    </div>
+
+    <%# Mobile menu (hidden by default – Stimulus で開閉) %>
+    <div id="mobile-menu" class="hidden md:hidden pb-4 border-t border-neutral-200 mt-1 pt-3">
+      <div class="flex flex-col gap-1">
+        <%= link_to root_path, class: "flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors #{current_page?(root_path) ? 'bg-amber-50 text-amber-600 font-medium' : ''}" do %>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span>ホーム</span>
+        <% end %>
+        <%= link_to rankings_path, class: "flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors" do %>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+          <span>ランキング</span>
+        <% end %>
+        <% if user_signed_in? %>
+          <div class="border-t border-neutral-200 mt-2 pt-2">
+            <span class="px-4 text-sm text-neutral-500"><%= current_user.display_name_or_email %></span>
+            <%= button_to destroy_user_session_path, method: :delete,
+                class: "w-full mt-2 px-4 py-3 text-left text-sm hover:bg-neutral-100 rounded-lg transition-colors" do %>
+              ログアウト
+            <% end %>
+          </div>
+        <% else %>
+          <%= link_to new_user_session_path,
+              class: "mt-2 block text-center px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full font-medium" do %>
+            ログイン / Login
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</nav>

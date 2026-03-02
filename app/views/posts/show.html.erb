@@ -1,0 +1,92 @@
+<% content_for :title, "#{@post.title.presence || 'Post'} – funny's" %>
+
+<div class="max-w-4xl mx-auto px-4 md:px-8 py-6">
+
+  <%# 戻るボタン %>
+  <%= link_to root_path, class: "inline-flex items-center gap-2 text-sm text-neutral-600 hover:text-neutral-900 mb-6" do %>
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+    </svg>
+    戻る
+  <% end %>
+
+  <article class="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-lg">
+
+    <%# Header %>
+    <div class="px-6 md:px-8 py-6 border-b border-neutral-200">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-12 h-12 bg-neutral-100 rounded-full flex items-center justify-center text-lg font-medium flex-shrink-0">
+          <%= @post.source_icon %>
+        </div>
+        <div class="flex-1">
+          <div class="font-medium"><%= @post.source_name %></div>
+          <div class="text-sm text-neutral-500"><%= time_ago_in_words(@post.created_at) %>前</div>
+        </div>
+        <a href="<%= @post.url %>" target="_blank" rel="noopener noreferrer"
+           class="flex items-center gap-2 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 rounded-full text-sm font-medium transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+          元のページを見る
+        </a>
+      </div>
+
+      <h1 class="text-2xl md:text-3xl font-bold mb-4">
+        <%= @post.title.presence || @post.url.truncate(60) %>
+      </h1>
+
+      <div class="text-sm text-neutral-600">
+        投稿者: <%= @post.author_name %>
+      </div>
+    </div>
+
+    <%# メディア埋め込み（詳細ページ：フル埋め込み対応）%>
+    <%= render "posts/embed", post: @post, card: false %>
+
+    <%# Comment/Body %>
+    <% if @post.body.present? %>
+      <div class="px-6 md:px-8 py-6 border-b border-neutral-200">
+        <p class="text-neutral-700 leading-relaxed"><%= @post.body %></p>
+      </div>
+    <% end %>
+
+    <%# Reactions %>
+    <div class="px-6 md:px-8 py-6 border-b border-neutral-200" id="reactions-<%= @post.id %>">
+      <h2 class="font-bold mb-4">リアクション</h2>
+      <% reactions = [
+        { key: "funny",     label: "面白い",    icon: "😄" },
+        { key: "laugh",     label: "笑える",    icon: "😂" },
+        { key: "cry",       label: "泣ける",    icon: "😭" },
+        { key: "wow",       label: "すごい",    icon: "😲" },
+        { key: "cool",      label: "かっこいい", icon: "😎" },
+        { key: "cute",      label: "かわいい",  icon: "🥰" },
+        { key: "surprised", label: "びっくり",  icon: "😱" },
+      ] %>
+      <div class="flex flex-wrap gap-3">
+        <% reactions.each do |r| %>
+          <%= button_to post_reactions_path(@post, kind: r[:key]),
+              method: :post,
+              data: { turbo_stream: true },
+              class: "group flex items-center gap-3 px-5 py-3 rounded-xl border-2 border-neutral-200 hover:border-amber-300 hover:bg-amber-50 hover:scale-105 transition-all" do %>
+            <span class="text-2xl group-hover:scale-110 transition-transform"><%= r[:icon] %></span>
+            <div class="text-left">
+              <div class="text-sm font-medium"><%= r[:label] %></div>
+              <div class="text-lg font-bold" id="reaction-count-<%= @post.id %>-<%= r[:key] %>">
+                <%= number_with_delimiter(@post.reaction_count(r[:key])) %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <%# コメント（準備中）%>
+    <div class="px-6 md:px-8 py-6">
+      <h2 class="font-bold mb-4">コメント</h2>
+      <div class="bg-neutral-50 rounded-xl p-8 text-center">
+        <div class="text-4xl mb-3">💬</div>
+        <p class="text-sm text-neutral-500">コメント機能は準備中です</p>
+      </div>
+    </div>
+  </article>
+</div>

@@ -17,7 +17,7 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
-# 認証（ログイン必要になったら）
+# 認証
 gem "devise"
 # gem "omniauth"            # 必要になったら
 # gem "omniauth-google-oauth2"

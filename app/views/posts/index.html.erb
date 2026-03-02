@@ -1,0 +1,35 @@
+<% content_for :title, "funny's – ポジティブで面白いコンテンツだけ" %>
+
+<div class="max-w-[1440px] mx-auto px-4 md:px-8 py-6">
+  <div class="flex gap-8">
+
+    <%# 左サイドバー %>
+    <%= render "shared/sidebar" %>
+
+    <%# メインコンテンツ %>
+    <main class="flex-1 min-w-0 max-w-2xl">
+      <%# 投稿フォーム %>
+      <%= render "posts/composer" %>
+
+      <%# タイムライン %>
+      <div class="space-y-6">
+        <% if @posts.any? %>
+          <% @posts.each do |post| %>
+            <%= render "posts/post_card", post: post %>
+          <% end %>
+        <% else %>
+          <div class="bg-white rounded-2xl border border-neutral-200 p-12 text-center">
+            <div class="text-6xl mb-4">😊</div>
+            <h3 class="font-bold text-lg mb-2">まだ投稿がありません</h3>
+            <p class="text-sm text-neutral-500">
+              面白いコンテンツを最初に投稿してみましょう！
+            </p>
+          </div>
+        <% end %>
+      </div>
+    </main>
+
+    <%# 右パネル %>
+    <%= render "shared/right_panel" %>
+  </div>
+</div>

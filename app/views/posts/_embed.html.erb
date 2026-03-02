@@ -1,0 +1,71 @@
+<%# locals: (post:, card: true) %>
+<%#
+  card: true  → タイムラインカード用（軽量表示）
+  card: false → 詳細ページ用（フル埋め込み）
+%>
+
+<% if post.embeddable? %>
+  <%# ── iframe 埋め込み（YouTube / NicoNico）── %>
+  <div class="relative w-full bg-black overflow-hidden" style="aspect-ratio:16/9">
+    <iframe
+      src="<%= post.embed_url %>"
+      class="absolute inset-0 w-full h-full"
+      frameborder="0"
+      allowfullscreen
+      loading="lazy"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share">
+    </iframe>
+  </div>
+
+<% elsif post.source == "twitter" %>
+  <%# ── Twitter/X ウィジェット（oEmbed）── %>
+  <% oembed = twitter_oembed_html(post) %>
+  <% if oembed %>
+    <div class="flex justify-center bg-neutral-50 py-6 px-4">
+      <%= oembed %>
+    </div>
+  <% else %>
+    <%= render "posts/embed_fallback", post: post %>
+  <% end %>
+
+<% elsif post.source == "tiktok" %>
+  <%# ── TikTok 埋め込み ── %>
+  <%
+    tiktok_id = post.url.match(%r{tiktok\.com/@[^/]+/video/(\d+)})&.[](1)
+  %>
+  <% if tiktok_id %>
+    <div class="flex justify-center bg-neutral-50 py-6 px-4"
+         data-controller="embed"
+         data-embed-platform-value="tiktok">
+      <blockquote
+        class="tiktok-embed"
+        cite="<%= post.url %>"
+        data-video-id="<%= tiktok_id %>"
+        style="max-width:605px; min-width:325px;">
+        <section>
+          <a href="<%= post.url %>" target="_blank" rel="noopener noreferrer"><%= post.url %></a>
+        </section>
+      </blockquote>
+    </div>
+  <% else %>
+    <%= render "posts/embed_fallback", post: post %>
+  <% end %>
+
+<% elsif post.source == "instagram" %>
+  <%# ── Instagram 埋め込み ── %>
+  <div class="flex justify-center bg-neutral-50 py-6 px-4"
+       data-controller="embed"
+       data-embed-platform-value="instagram">
+    <blockquote
+      class="instagram-media"
+      data-instgrm-permalink="<%= post.url %>"
+      data-instgrm-version="14"
+      style="max-width:540px; width:100%;">
+      <a href="<%= post.url %>" target="_blank" rel="noopener noreferrer"><%= post.url %></a>
+    </blockquote>
+  </div>
+
+<% else %>
+  <%# ── リンクカード（埋め込み非対応プラットフォーム）── %>
+  <%= render "posts/embed_fallback", post: post %>
+<% end %>

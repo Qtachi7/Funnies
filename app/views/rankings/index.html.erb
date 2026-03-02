@@ -1,0 +1,81 @@
+<% content_for :title, "ランキング – funny's" %>
+
+<div class="max-w-[1440px] mx-auto px-4 md:px-8 py-6">
+  <div class="flex gap-8">
+
+    <%# 左サイドバー %>
+    <%= render "shared/sidebar" %>
+
+    <%# メインコンテンツ %>
+    <main class="flex-1 min-w-0 max-w-2xl">
+
+      <%# フィルターコントロール %>
+      <div class="bg-white rounded-2xl border border-neutral-200 p-4 mb-6">
+        <div class="flex flex-col gap-4">
+
+          <%# 期間タブ %>
+          <div class="flex gap-1 bg-neutral-100 rounded-xl p-1">
+            <% [["today", "今日"], ["weekly", "週間"], ["monthly", "月間"], ["yearly", "年間"], ["alltime", "全期間"]].each do |val, label| %>
+              <%= link_to rankings_path(period: val, kind: @reaction_kind),
+                  class: "flex-1 px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium text-center transition-all #{@period == val ? 'bg-white shadow text-neutral-900' : 'text-neutral-500 hover:text-neutral-700'}" do %>
+                <%= label %>
+              <% end %>
+            <% end %>
+          </div>
+
+          <%# リアクション種別フィルター %>
+          <div class="flex items-center gap-3">
+            <span class="text-sm text-neutral-600 whitespace-nowrap">リアクション:</span>
+            <div class="flex flex-wrap gap-1">
+              <% [["funny","😄"],["laugh","😂"],["cry","😭"],["wow","😲"],["cool","😎"],["cute","🥰"],["surprised","😱"]].each do |val, icon| %>
+                <%= link_to rankings_path(period: @period, kind: val),
+                    class: "px-3 py-1.5 rounded-full text-sm border transition-all #{@reaction_kind == val ? 'bg-amber-500 border-amber-500 text-white' : 'border-neutral-200 hover:border-neutral-300'}" do %>
+                  <%= icon %>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%# ランキングリスト %>
+      <% if @posts.any? %>
+        <div class="space-y-6">
+          <% @posts.each_with_index do |post, i| %>
+            <% rank = i + 1 %>
+            <div class="relative">
+              <%# ランクバッジ %>
+              <div class="flex items-center gap-2 mb-2 px-1">
+                <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0
+                  <%= rank == 1 ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-white' :
+                      rank == 2 ? 'bg-neutral-300 text-neutral-700' :
+                      rank == 3 ? 'bg-amber-100 text-amber-700' :
+                                  'bg-neutral-100 text-neutral-500' %>">
+                  <%= rank <= 3 ? ["🏆","🥈","🥉"][rank - 1] : rank %>
+                </div>
+                <span class="text-xs text-neutral-500 font-medium">
+                  <%= { "funny" => "😄", "laugh" => "😂", "cry" => "😭", "wow" => "😲",
+                        "cool" => "😎", "cute" => "🥰", "surprised" => "😱" }[@reaction_kind] %>
+                  <%= number_with_delimiter(post.reaction_count(@reaction_kind)) %> リアクション
+                </span>
+              </div>
+              <%= render "posts/post_card", post: post %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="bg-white rounded-2xl border border-neutral-200 p-12 text-center">
+          <div class="text-6xl mb-4">🏆</div>
+          <h3 class="font-bold text-lg mb-2">この期間の投稿はまだありません</h3>
+          <p class="text-sm text-neutral-500 mb-6">面白いコンテンツを投稿してランキングに登場しましょう！</p>
+          <%= link_to root_path, class: "inline-block px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full text-sm font-medium" do %>
+            ホームへ戻る
+          <% end %>
+        </div>
+      <% end %>
+    </main>
+
+    <%# 右パネル %>
+    <%= render "shared/right_panel" %>
+  </div>
+</div>

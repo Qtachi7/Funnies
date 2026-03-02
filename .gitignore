@@ -27,9 +27,10 @@
 /tmp/storage/*
 !/tmp/storage/
 !/tmp/storage/.keep
-
+docs/design/Responsive UI for funny`s/
 /public/assets
 
 # Ignore key files for decrypting credentials and more.
 /config/*.key
 
+CLAUDE.md
