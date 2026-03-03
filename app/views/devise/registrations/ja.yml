@@ -1,0 +1,73 @@
+ja:
+  activerecord:
+    models:
+      user: ユーザー
+      post: 
+    attributes:
+      user:
+        email: メールアドレス
+        password: パスワード
+        password_confirmation: パスワード（確認）
+        display_name: 表示名
+        username: ユーザーネーム
+        bio: 自己紹介
+        avatar: アイコン画像
+        cover: カバー画像
+      post:
+        url: URL
+        title: タイトル
+        body: 本文
+        source: ソース
+  devise:
+    sessions:
+      new:
+        sign_in: ログイン
+      signed_in: ログインしました。
+      signed_out: ログアウトしました。
+      already_signed_out: すでにログアウト済みです。
+    registrations:
+      new:
+        sign_up: アカウント作成
+      signed_up: アカウントを作成しました。
+      signed_up_but_inactive: アカウントを作成しましたが、まだ有効化されていません。
+      signed_up_but_locked: アカウントを作成しましたが、ロックされています。
+      destroyed: アカウントを削除しました。
+      update_needs_confirmation: アカウント情報を更新しました。新しいメールアドレスの確認が必要です。
+      updated: アカウント情報を更新しました。
+      updated_but_password_changed: アカウント情報を更新しました。パスワードが変更されたため、再度サインインしてください。
+    passwords:
+      send_instructions: パスワードのリセット手順をメールで送信しました。
+      updated: パスワードを変更しました。サインインしてください。
+      updated_not_active: パスワードを変更しました。
+      send_paranoid_instructions: メールアドレスが登録済みの場合、パスワードのリセット手順を送信しました。
+      no_token: このページにはアクセスできません。パスワードリセットのメールからアクセスしてください。
+    confirmations:
+      send_instructions: アカウントの有効化について数分以内にメールでご連絡します。
+      send_paranoid_instructions: メールアドレスが登録済みの場合、アカウントの有効化について数分以内にメールでご連絡します。
+      confirmed: メールアドレスが確認できました。
+    failure:
+      already_authenticated: すでにサインインしています。
+      unauthenticated: ログインしてください。
+      unconfirmed: メールアドレスを確認してください。
+      locked: アカウントはロックされています。
+      invalid: "%{authentication_keys}またはパスワードが違います。"
+      last_attempt: もう一回誤るとアカウントがロックされます。
+      not_found_in_database: "%{authentication_keys}またはパスワードが違います。"
+      timeout: セッションがタイムアウトしました。もう一度サインインしてください。
+      inactive: アカウントはまだ有効化されていません。
+    mailer:
+      confirmation_instructions:
+        subject: メールアドレス確認のお願い
+      reset_password_instructions:
+        subject: パスワードのリセット
+      unlock_instructions:
+        subject: アカウントのロック解除
+      email_changed:
+        subject: メールアドレス変更のお知らせ
+      password_change:
+        subject: パスワード変更のお知らせ
+  errors:
+    messages:
+      not_saved:
+        one: "エラーが1件あるため%{resource}を保存できませんでした:"
+        other: "エラーが%{count}件あるため%{resource}を保存できませんでした:"
