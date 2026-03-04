@@ -1,0 +1,16 @@
+<%# locals: (user:) %>
+<div data-follow-user-id="<%= user.id %>">
+  <% if user_signed_in? && current_user != user %>
+    <% if current_user.following?(user) %>
+      <%= button_to user_follow_path(user), method: :delete, data: { turbo_stream: true },
+          class: "px-4 py-1.5 rounded-full border border-neutral-300 text-neutral-700 text-sm font-medium hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all" do %>
+        フォロー中
+      <% end %>
+    <% else %>
+      <%= button_to user_follow_path(user), method: :post, data: { turbo_stream: true },
+          class: "px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-medium hover:from-amber-600 hover:to-orange-600 transition-all shadow-sm hover:shadow-md" do %>
+        フォローする
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

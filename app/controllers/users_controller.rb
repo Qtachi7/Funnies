@@ -1,9 +1,16 @@
 class UsersController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, only: [:edit, :update]
 
   def show
-    @user = current_user
-    @tab  = params[:tab].presence_in(%w[posts reactions stats]) || "posts"
+    if params[:id].present?
+      @user = User.find(params[:id])
+    else
+      redirect_to new_user_session_path and return unless user_signed_in?
+      @user = current_user
+    end
+
+    @is_own_profile = user_signed_in? && current_user == @user
+    @tab = params[:tab].presence_in(%w[posts reactions stats]) || "posts"
 
     @posts = @user.posts.order(created_at: :desc) if @tab == "posts"
 

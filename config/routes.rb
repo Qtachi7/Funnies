@@ -12,6 +12,10 @@ Rails.application.routes.draw do
 
   resources :rankings, only: [:index]
 
+  resources :users, only: [:show] do
+    resource :follow, only: [:create, :destroy]
+  end
+
   get    "profile",      to: "users#show",   as: :profile
   get    "profile/edit", to: "users#edit",   as: :edit_profile
   patch  "profile",      to: "users#update"

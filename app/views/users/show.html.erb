@@ -40,12 +40,16 @@
                 <p class="text-neutral-500">@<%= @user.username %></p>
               <% end %>
             </div>
-            <%= link_to edit_profile_path,
-                class: "inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full hover:from-amber-600 hover:to-orange-600 transition-all shadow-sm hover:shadow-md text-sm font-medium" do %>
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-              </svg>
-              プロフィールを編集
+            <% if @is_own_profile %>
+              <%= link_to edit_profile_path,
+                  class: "inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full hover:from-amber-600 hover:to-orange-600 transition-all shadow-sm hover:shadow-md text-sm font-medium" do %>
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                プロフィールを編集
+              <% end %>
+            <% else %>
+              <%= render "follows/follow_button", user: @user %>
             <% end %>
           </div>
 
@@ -67,6 +71,14 @@
             <div>
               <span class="font-bold"><%= number_with_delimiter(@user.posts.count) %></span>
               <span class="text-neutral-500 ml-1">投稿</span>
+            </div>
+            <div>
+              <span class="font-bold"><%= number_with_delimiter(@user.following.count) %></span>
+              <span class="text-neutral-500 ml-1">フォロー中</span>
+            </div>
+            <div>
+              <span class="font-bold"><%= number_with_delimiter(@user.followers.count) %></span>
+              <span class="text-neutral-500 ml-1">フォロワー</span>
             </div>
             <div>
               <span class="font-bold">
@@ -93,7 +105,7 @@
     <div class="border-b border-neutral-200">
       <div class="flex">
         <% tabs.each do |tab| %>
-          <%= link_to profile_path(tab: tab[:id]),
+          <%= link_to (@is_own_profile ? profile_path(tab: tab[:id]) : user_path(@user, tab: tab[:id])),
               class: "flex-1 px-6 py-4 text-center transition-all relative #{@tab == tab[:id] ? 'text-amber-600' : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'}" do %>
             <div class="flex flex-col items-center gap-1">
               <span class="font-medium">
@@ -119,7 +131,7 @@
         <% if @posts.any? %>
           <div class="space-y-6">
             <% @posts.each do |post| %>
-              <%= render "posts/post_card", post: post %>
+              <%= render "posts/post_card", post: post, show_follow_button: false %>
             <% end %>
           </div>
         <% else %>
@@ -141,7 +153,8 @@
           <div class="space-y-6">
             <% @reacted_posts.each do |post| %>
               <%= render "posts/post_card", post: post,
-                  user_reacted_kinds: @user_reactions[post.id] || Set.new %>
+                  user_reacted_kinds: @user_reactions[post.id] || Set.new,
+                  show_follow_button: false %>
             <% end %>
           </div>
         <% else %>

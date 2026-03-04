@@ -1,19 +1,25 @@
-<%# locals: (post:, user_reacted_kinds: Set.new) %>
+<%# locals: (post:, user_reacted_kinds: Set.new, show_follow_button: true) %>
 <article class="bg-white rounded-2xl border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-all shadow-sm hover:shadow-md">
 
   <%# Header %>
   <div class="px-6 py-4 flex items-center gap-3">
-    <% if post.user&.avatar&.attached? %>
-      <%= image_tag post.user.avatar.variant(resize_to_fill: [40, 40]), class: "w-10 h-10 rounded-full object-cover flex-shrink-0" %>
-    <% else %>
-      <div class="w-10 h-10 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
-        <%= post.author_name.first.upcase %>
+    <%= link_to (post.user ? user_path(post.user) : "#"),
+        class: "flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity" do %>
+      <% if post.user&.avatar&.attached? %>
+        <%= image_tag post.user.avatar.variant(resize_to_fill: [40, 40]), class: "w-10 h-10 rounded-full object-cover flex-shrink-0" %>
+      <% else %>
+        <div class="w-10 h-10 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
+          <%= post.author_name.first.upcase %>
+        </div>
+      <% end %>
+      <div class="min-w-0">
+        <div class="font-bold text-base"><%= post.author_name %></div>
+        <div class="text-xs text-neutral-500"><%= time_ago_in_words(post.created_at) %>前</div>
       </div>
     <% end %>
-    <div class="flex-1 min-w-0">
-      <div class="font-bold text-base"><%= post.author_name %></div>
-      <div class="text-xs text-neutral-500"><%= time_ago_in_words(post.created_at) %>前</div>
-    </div>
+    <% if show_follow_button && post.user %>
+      <%= render "follows/follow_button", user: post.user %>
+    <% end %>
   </div>
 
 

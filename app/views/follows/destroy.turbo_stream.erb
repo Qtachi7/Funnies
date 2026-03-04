@@ -1,0 +1,3 @@
+<%= turbo_stream.replace_all "[data-follow-user-id='#{@user.id}']" do %>
+  <%= render "follows/follow_button", user: @user %>
+<% end %>
