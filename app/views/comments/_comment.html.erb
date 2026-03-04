@@ -14,7 +14,12 @@
         </div>
       <% end %>
       <div class="min-w-0">
-        <div class="font-bold text-base"><%= comment.user.display_name_or_email %></div>
+        <div class="flex items-baseline gap-1.5 flex-wrap">
+          <span class="font-bold text-base"><%= comment.user.display_name_or_email %></span>
+          <% if comment.user.username.present? %>
+            <span class="text-sm text-neutral-400">@<%= comment.user.username %></span>
+          <% end %>
+        </div>
         <div class="text-xs text-neutral-500"><%= time_ago_in_words(comment.created_at) %>前</div>
       </div>
     <% end %>

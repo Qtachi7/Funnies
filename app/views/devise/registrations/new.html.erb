@@ -45,6 +45,19 @@
             </div>
 
             <div>
+              <label class="block text-sm font-medium text-neutral-700 mb-2">
+                ユーザーID <span class="text-red-500">*</span>
+                <span class="text-xs font-normal text-neutral-400 ml-1">半角英数字・アンダースコア（3〜20文字）</span>
+              </label>
+              <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 font-medium select-none">@</span>
+                <%= f.text_field :username,
+                    placeholder: "your_id",
+                    class: "w-full pl-8 pr-4 py-3 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all" %>
+              </div>
+            </div>
+
+            <div>
               <label class="block text-sm font-medium text-neutral-700 mb-2">メールアドレス</label>
               <div class="relative">
                 <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

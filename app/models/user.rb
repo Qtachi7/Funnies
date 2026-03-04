@@ -25,6 +25,12 @@ class User < ApplicationRecord
     following.include?(other_user)
   end
 
+  validates :username,
+    presence: true,
+    uniqueness: { case_sensitive: false },
+    format: { with: /\A[a-zA-Z0-9_]+\z/, message: "は半角英数字とアンダースコアのみ使用できます" },
+    length: { minimum: 3, maximum: 20 }
+
   validates :bio, length: { maximum: 160 }, allow_blank: true
 
   ALLOWED_IMAGE_TYPES = %w[image/png image/jpeg image/gif image/webp].freeze
