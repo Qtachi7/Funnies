@@ -1,5 +1,6 @@
 class PostsController < ApplicationController
-  before_action :authenticate_user!, only: [:create]
+  before_action :authenticate_user!, only: [:create, :destroy]
+  before_action :set_post_for_owner, only: [:destroy]
 
   def index
     @posts = Post.order(created_at: :desc)
@@ -30,7 +31,18 @@ class PostsController < ApplicationController
     end
   end
 
+  def destroy
+    @post.destroy
+    redirect_to root_path, notice: "投稿を削除しました"
+  end
+
   private
+
+  def set_post_for_owner
+    @post = current_user.posts.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to root_path, alert: "削除できません"
+  end
 
   def post_params
     params.expect(post: [:url, :title, :body])

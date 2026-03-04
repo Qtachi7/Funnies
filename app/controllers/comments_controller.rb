@@ -2,6 +2,14 @@ class CommentsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_post
 
+  def destroy
+    @comment = @post.comments.find(params[:id])
+    if @comment.user == current_user
+      @comment.destroy
+    end
+    redirect_to post_path(@post, anchor: "comments")
+  end
+
   def create
     @comment = @post.comments.build(comment_params.merge(user: current_user))
 

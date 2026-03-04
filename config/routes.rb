@@ -6,9 +6,9 @@ Rails.application.routes.draw do
 
   root "posts#index"
 
-  resources :posts, only: [:index, :show, :create] do
+  resources :posts, only: [:index, :show, :create, :destroy] do
     resources :reactions, only: [:create]
-    resources :comments,  only: [:create]
+    resources :comments,  only: [:create, :destroy]
   end
 
   resources :rankings, only: [:index]

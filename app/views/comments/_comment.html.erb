@@ -18,6 +18,27 @@
         <div class="text-xs text-neutral-500"><%= time_ago_in_words(comment.created_at) %>前</div>
       </div>
     <% end %>
+    <% if current_user && comment.user == current_user %>
+      <div data-controller="kebab" class="relative flex-shrink-0">
+        <button data-action="click->kebab#toggle click@window->kebab#close"
+                class="p-2 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 rounded-full transition-colors">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+          </svg>
+        </button>
+        <div data-kebab-target="menu" class="hidden absolute right-0 top-full mt-1 w-40 bg-white rounded-xl border border-neutral-200 shadow-lg z-50 overflow-hidden">
+          <%= button_to post_comment_path(post, comment), method: :delete,
+              data: { turbo_confirm: "このコメントを削除しますか？" },
+              class: "w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors" do %>
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+            削除
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
 
   <%# 本文 %>
