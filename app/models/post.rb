@@ -1,6 +1,7 @@
 class Post < ApplicationRecord
   belongs_to :user, optional: true
   has_many :reactions, dependent: :destroy
+  has_many :comments, dependent: :destroy
 
   REACTION_KINDS = %w[funny laugh cry wow cool cute surprised].freeze
 

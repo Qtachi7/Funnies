@@ -15,6 +15,9 @@ class PostsController < ApplicationController
 
   def show
     @post = Post.find(params[:id])
+    @comments = @post.comments.top_level.includes(:user, replies: :user).order(created_at: :asc)
+    @user_reacted_kinds = current_user&.reactions&.where(post: @post)
+                                       &.pluck(:kind)&.to_set || Set.new
   end
 
   def create

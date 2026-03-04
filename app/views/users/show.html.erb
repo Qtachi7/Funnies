@@ -225,22 +225,22 @@
           <%# 活動概要 %>
           <div>
             <h3 class="text-lg font-bold mb-4">活動概要</h3>
-            <div class="bg-neutral-50 rounded-xl p-6 space-y-4">
+            <div class="bg-neutral-50 rounded-xl p-6">
               <div class="flex justify-between items-center">
                 <span class="text-neutral-600">今月の投稿数</span>
                 <span class="font-medium"><%= @user.posts.monthly.count %> 投稿</span>
               </div>
-              <% most_popular = @user.posts.max_by(&:total_reactions) %>
-              <% if most_popular %>
-                <div class="flex justify-between items-center gap-4">
-                  <span class="text-neutral-600 whitespace-nowrap">最も人気の投稿</span>
-                  <span class="font-medium text-right line-clamp-1">
-                    <%= most_popular.title.presence || most_popular.url.truncate(40) %>
-                  </span>
-                </div>
-              <% end %>
             </div>
           </div>
+
+          <%# 最も人気の投稿 %>
+          <% most_popular = @user.posts.max_by(&:total_reactions) %>
+          <% if most_popular %>
+            <div>
+              <h3 class="text-lg font-bold mb-4">最も人気の投稿</h3>
+              <%= render "posts/post_card", post: most_popular, user_reacted_kinds: Set.new, show_follow_button: false %>
+            </div>
+          <% end %>
         </div>
       <% end %>
 

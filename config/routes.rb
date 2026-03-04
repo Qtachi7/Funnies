@@ -8,6 +8,7 @@ Rails.application.routes.draw do
 
   resources :posts, only: [:index, :show, :create] do
     resources :reactions, only: [:create]
+    resources :comments,  only: [:create]
   end
 
   resources :rankings, only: [:index]
