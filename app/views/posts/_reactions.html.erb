@@ -18,7 +18,7 @@
         class: "group flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all text-sm #{active ? 'bg-amber-50 border-amber-400 text-amber-700' : 'border-neutral-200 hover:border-amber-300 hover:bg-amber-50'}",
         id: "reaction-btn-#{post.id}-#{r[:key]}" do %>
       <span class="text-base group-hover:scale-110 transition-transform"><%= r[:icon] %></span>
-      <span class="font-medium" id="reaction-count-#{post.id}-#{r[:key]}">
+      <span class="font-medium" id="reaction-count-<%= post.id %>-<%= r[:key] %>">
         <%= number_with_delimiter(post.reaction_count(r[:key])) %>
       </span>
     <% end %>

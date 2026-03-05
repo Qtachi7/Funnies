@@ -89,4 +89,7 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  gem "playwright-ruby-client"
+  gem "capybara-playwright-driver"
+  gem "database_cleaner-active_record"
 end

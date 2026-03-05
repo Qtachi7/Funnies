@@ -9,13 +9,17 @@ services:
       - postgres_data:/var/lib/postgresql
     ports:
       - "5432:5432"
+
   web:
-    image: ruby:3.4.2
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     working_dir: /app
     command: bash -lc "bundle install && bundle exec rails s -b 0.0.0.0 -p 3000"
     volumes:
       - .:/app
       - bundle_cache:/usr/local/bundle
+      - playwright_browsers:/root/.cache/ms-playwright
     environment:
       BUNDLE_PATH: /usr/local/bundle
       DATABASE_HOST: db
@@ -29,3 +33,4 @@ services:
 volumes:
   postgres_data:
   bundle_cache:
+  playwright_browsers:
