@@ -75,6 +75,8 @@ group :development, :test do
   gem "rubocop", require: false
   gem "bundler-audit", require: false
   gem "brakeman", require: false
+  gem "sentry-ruby"
+  gem "sentry-rails"
 end
 
 group :development do
