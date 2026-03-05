@@ -1,121 +1,193 @@
-# funny`s- 面白共有サイト 
+# Funnies
 
-#### 面白いもの共有サイト
+> ポジティブ共有SNS
+既存SNSではネガティブな投稿が拡散されやすいアルゴリズム設計が多く、
+「楽しいコンテンツだけを見たい」というニーズが満たされていないと感じました。
 
-- **目的**
-    - XやInstagram、YouTube、TikTok、ニコニコなどで見つけたものを**まとめて共有**できる場所
-    - ネガティブ投稿が多いSNSに不満がある人向けに、**面白い投稿が集まる場**を作る
-- **想定UI**
-    - X（Twitter）風
-- **機能アイデア**
-    - ログイン機能
-    - ランキング（ファニーボタン＝いいね相当）
-        - 今日／週間／月間／年間／累計
-    - トレンド機能
-    
-    - リアクション種類を増やす案
-        - 泣
-        - 楽しい
-        - 驚き
-        - かっこいい
-        - かわいい
-        - ⁈
-        - それぞれのランキング
+Funnies は、
+「面白さ」「ポジティブさ」を軸にランキング・リアクション設計を行い、
+拡散構造そのものを再設計することを目的としています。
 
-## **技術スタック想定**
+X・Instagram・YouTube・TikTok・ニコニコ動画などで見つけた「笑える・感動した」コンテンツのURLを共有し、複数のリアクションで盛り上がれるキュレーションサービスです。
 
-#### OS
+---
 
-- Ubuntu
+## 主な機能
 
-#### 開発環境
+| 機能 | 詳細 |
+|---|---|
+| **投稿** | URL・タイトル・コメントを入力するだけで投稿できる |
+| **埋め込みプレビュー** | X/Twitter は oEmbed (サーバーサイドキャッシュ)、YouTube・ニコニコは iframe、TikTok・Instagram は Stimulus で外部スクリプトを動的ロード |
+| **複数リアクション** | funny / laugh / cry / wow / cool / cute / surprised の 7 種類。ログインユーザーはトグル式で ON/OFF |
+| **Turbo Stream 更新** | リアクションボタン押下時はページリロードなしでカウントが即時更新 |
+| **ランキング** | 今日 / 週間 / 月間 / 年間 / 累計 × リアクション種別でフィルタリング可能 |
+| **コメント** | ネストされた返信（parent_id による自己参照）に対応 |
+| **フォロー** | ユーザー間の相互フォロー機能 |
+| **認証** | Devise によるメール＋パスワード認証。ユーザー名・アバター・カバー画像・自己紹介を設定可能 |
+| **ソース自動判別** | URL から投稿元プラットフォームを自動判定し、アイコン・ラベルを表示 |
 
-- Docker
+---
 
-#### フロントエンド
+## 技術スタック
 
-- HTML
-- CSS
-- Tailwind CSS
-- JavaScript
-- TypeScript（必要に応じて）
+### バックエンド
+- **Ruby 3.4.2 / Rails 8.1.2**
+- **PostgreSQL 18**（マルチDB構成: primary / cache / queue / cable を分離）
+- **Solid Queue / Solid Cache / Solid Cable**（Redis 不要の DB バックエンド）
+- **Devise** — 認証
+- **Pagy** — ページネーション
+- **Ransack** — 検索
+- **Friendly ID** — スラッグ URL
+- **Active Storage** — アバター・カバー画像アップロード
 
-#### バックエンド
+### フロントエンド
+- **Hotwire（Turbo + Stimulus）** — SPA ライクな UX を JavaScript フレームワークなしで実現
+- **Importmap** — Node.js / バンドラー不要の JS 管理
+- **Tailwind CSS**（Play CDN）— ユーティリティファーストな CSS
+- **Propshaft** — アセットパイプライン
 
-- Ruby 3.4.2
-- Ruby on Rails　8.1.2
+### インフラ / DevOps
+- **Docker / Kamal** — コンテナベースのデプロイ
+- **GitHub Actions CI** — PR・main push ごとに 5 ジョブ並列実行
 
-#### 品質・セキュリティ（Gem）
+### テスト / 品質
+- **RSpec Rails + Factory Bot + Faker + Capybara**
+- **Playwright（`capybara-playwright-driver`）** — システムテストで実ブラウザ（Chromium）を使用。失敗時に Trace Viewer 用の `.zip` を自動保存
+- **Brakeman** — Rails セキュリティ静的解析
+- **Bundler Audit** — Gem 脆弱性チェック
+- **RuboCop** (`rubocop-rails-omakase`) — コードスタイル統一
+- **Bullet** — N+1 クエリ検出
 
-認証
+---
 
-- **devise**：ログインが要るなら最優先
-- **omniauth + omniauth-xxx**：Google/GitHubログインやるなら（Deviseと併用が多い）
+## 設計のポイント
 
-ページング
+### リアクションのカウント管理
+リアクション数は `posts` テーブルの `funny_count` / `laugh_count` 等の非正規化カラムで保持しています。`Reaction` モデルで ON/OFF を管理しつつ、読み取り時に集計クエリが不要になりランキング取得が高速です。
 
-- **pagy**：軽くて速い。
+### Turbo Stream によるリアクション更新
+リアクションボタンは `form_with` + `ReactionsController#create` で処理し、レスポンスとして `turbo_stream` 形式でボタン部分のみを差し替えます。フルリロードなしで UI が更新されます。
 
-検索
+### oEmbed キャッシュ
+X/Twitter の埋め込みは外部 oEmbed API をサーバーサイドで取得し、Rails キャッシュ（Solid Cache）に 24 時間保存します。外部 API への不要なリクエストを削減しつつ、ウィジェットの表示が安定します。
 
-- **ransack**：管理画面/一覧検索に便利。
+### マルチ DB 構成
+`config/database.yml` で `primary` / `cache` / `queue` / `cable` を分離。本番環境ではそれぞれ独立した PostgreSQL インスタンスに接続できます。
 
-便利系
+---
 
-- **friendly_id**：URLを `posts/123` → `posts/funny-title` みたいにしたいなら
-- **rails-i18n**：
-- dotenv-rails
-- capybara
+## ドキュメント
 
-テスト
+| ドキュメント | 内容 |
+|---|---|
+| [ER図](docs/er_diagram.md) | 全テーブル（アプリ + Solid Queue/Cache/Cable）の定義・リレーション・インデックス |
+| [ユースケース図](docs/usecase_diagram.md) | ゲスト / ログインユーザー別のユースケース一覧 |
+| [フローチャート](docs/flowchart.md) | 投稿・リアクション・コメント・フォロー・ランキング・登録の処理フロー |
 
-- **rspec-rails**
-- **factory_bot_rails**
-- **faker**
+---
 
-開発効率
+## ローカル開発環境のセットアップ（Docker）
 
-- **pry**（or `pry-rails`）：デバッグに便利
-- **better_errors**：開発時の例外表示が見やすい
-- **bullet**：N+1検知
+**前提:** Docker Desktop（または Docker Engine + Compose Plugin）がインストール済みであること。
 
-セキュリティ/品質（CIで効く）
+> 開発用イメージ（`Dockerfile.dev`）には **Node.js 22 + Playwright Chromium** が含まれているため、システムテストをそのまま実行できます。
 
-- **brakeman**
-- **bundler-audit**
-- **rubocop**
+```bash
+# 1. リポジトリをクローン
+git clone https://github.com/your-username/funnies.git
+cd funnies
 
-#### DB
+# 2. コンテナをビルド・起動（PostgreSQL + Rails + Playwright）
+docker compose up -d --build
 
-- Postgres 18
+# 3. DB 作成 & マイグレーション（初回のみ）
+docker compose exec web bin/rails db:create db:migrate
 
-#### テスト
+# 4. （任意）シードデータを投入
+docker compose exec web bin/rails db:seed
+```
 
-- RSpec
-- Playwright
+ブラウザで http://localhost:3000 を開くと起動しています。
 
-#### CI/CD
+### よく使うコマンド
 
-- GitHub Actions
+```bash
+# ログを確認
+docker compose logs -f web
 
-#### インフラ（AWS）
+# Rails コンソール
+docker compose exec web bin/rails console
 
-- ECS（Fargate）
-- RDS
-- ALB
-- CloudWatch
-- Secrets Manager
-- Terraform（収益が見込めそうなら）
+# テスト実行
+docker compose exec web bundle exec rspec
 
-#### 監視
+# コンテナを停止
+docker compose down
 
-- Sentry
-- Datadog（余裕があれば）
+# コンテナ・ボリュームごと削除（DB リセット）
+docker compose down -v
+```
 
-#### ツール
+### 環境変数
 
-- IDE: Cursor
-- 設計（図）: [draw.io](http://draw.io)（クラス図作成）
-- レイアウト設計: Figma
-- バージョン管理: Git / GitHub
-- 依存更新: Dependabot（GitHubで自動アップデート）
+`compose.yml` にデフォルト値が設定されているため、ローカル開発は `.env` なしで起動できます。変更したい場合はプロジェクトルートに `.env` を作成してください。
+
+```env
+DATABASE_HOST=db
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=postgres
+```
+
+---
+
+## テスト・CI
+
+```bash
+# モデル / リクエストスペック
+docker compose exec web bundle exec rspec spec/models spec/requests
+
+# システムスペック（Playwright / Chromium）
+docker compose exec web bundle exec rspec spec/system
+
+# 全スペック
+docker compose exec web bundle exec rspec
+
+# Lint + セキュリティスキャン + テスト一括実行
+bin/ci
+```
+
+### Playwright Trace Viewer
+
+システムテストが失敗すると `tmp/capybara/traces/` に Trace ファイル（`.zip`）が自動保存されます。以下のコマンドでブラウザ上で再生可能です。
+
+```bash
+npx playwright show-trace tmp/capybara/traces/<ファイル名>.zip
+```
+
+各ステップのスクリーンショット・ネットワークリクエスト・DOM スナップショットを時系列で確認できます。
+
+### GitHub Actions CI
+
+PR・main へのプッシュのたびに以下が並列実行されます:
+
+1. `scan_ruby` — Brakeman + Bundler Audit
+2. `scan_js`   — Importmap audit
+3. `lint`      — RuboCop
+4. `test`      — RSpec（モデル / リクエスト）
+5. `system-test` — RSpec + Playwright（失敗時スクリーンショットを Artifact 保存）
+
+---
+
+## 今後の予定
+
+- [ ] OmniAuth（Google / GitHub ログイン）
+- [ ] ファニーボタン（いいね相当の単独リアクション）の強化
+- [ ] トレンド機能（時間減衰スコア）
+- [ ] 通知機能
+- [ ] 本番デプロイ（AWS ECS Fargate + RDS + ALB）
+
+---
+
+## ライセンス
+
+MIT
