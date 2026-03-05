@@ -1,7 +1,7 @@
 # Funnies
 
 > ポジティブ共有SNS
-既存SNSではネガティブな投稿が拡散されやすいアルゴリズム設計が多く、
+既存SNSではネガティブな投稿が多く、
 「楽しいコンテンツだけを見たい」というニーズが満たされていないと感じました。
 
 Funnies は、
@@ -9,6 +9,17 @@ Funnies は、
 拡散構造そのものを再設計することを目的としています。
 
 X・Instagram・YouTube・TikTok・ニコニコ動画などで見つけた「笑える・感動した」コンテンツのURLを共有し、複数のリアクションで盛り上がれるキュレーションサービスです。
+
+## デモ
+
+https://funnies-5u2m.onrender.com/
+
+> ⚠️ このアプリは Render の **Free Plan** でホスティングされています。  
+> 一定時間アクセスがない場合、初回アクセス時に **30〜60秒程度の起動時間** が発生します。
+
+## スクリーンショット
+
+<img width="2255" height="1311" alt="image" src="https://github.com/user-attachments/assets/d68855c8-8118-4c7d-855c-eb5ab3855d2b" />
 
 ---
 
@@ -58,6 +69,50 @@ X・Instagram・YouTube・TikTok・ニコニコ動画などで見つけた「笑
 - **RuboCop** (`rubocop-rails-omakase`) — コードスタイル統一
 - **Bullet** — N+1 クエリ検出
 
+---
+
+## インフラ構成（本番想定）
+
+本番環境では以下の構成での運用を想定しています。
+
+- **AWS ECS (Fargate)** — Rails アプリケーション
+- **AWS RDS (PostgreSQL)** — メインデータベース
+- **Application Load Balancer (ALB)** — HTTPS / 負荷分散
+- **CloudWatch** — ログ収集
+- **Sentry** — アプリケーションエラー監視
+
+コンテナベースのデプロイを前提としており、Docker イメージを ECS へデプロイする構成を想定しています。
+
+---
+
+## 暫定デプロイ（Render）
+
+現在は **MVP 検証のため、Render のフリープランで一時的に公開**しています。
+
+構成：
+
+- **Render Web Service（Docker）**
+- **Render PostgreSQL**
+- **Free Plan**
+
+フリープランのため以下の制限があります。
+
+- 一定時間アクセスがないとスリープする
+- リソース制限あり
+
+**将来的には AWS ECS (Fargate) へ移行予定**です。
+
+---
+
+## 監視（Sentry）
+
+本番運用を想定し、**Sentry を用いたエラー監視**を導入しています。
+
+主な用途：
+
+- Rails アプリケーションの例外監視
+- 本番環境でのエラー発生箇所の追跡
+- スタックトレースの可視化
 ---
 
 ## 設計のポイント
